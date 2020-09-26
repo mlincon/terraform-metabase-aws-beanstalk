@@ -12,16 +12,29 @@ terraform apply -var-file="variables.tfvars"
 
 
 # General
-region = "eu-central-1"
+region  = "eu-central-1"
 profile = "default"
+default_tags = {
+  Name : "metabase",
+  project : "experiment"
+}
+
+# S3 Variables
+s3_bucket_name        = "terraform-metabase-mxl-experiment"
+source_code_file_name = "metabase-aws-eb.zip"
 
 # Beanstalk Application Variables
-beanstalk_application_name = "metabase-application"
+beanstalk_app_name        = "metabase-application"
+beanstalk_app_description = "An instance of the Metabase BI tool"
+# delete_source_from_s3     = true
 
+beanstalk_app_version_name        = "metabase-application-version"
+beanstalk_app_version_description = "The application version"
 
 # Beanstalk Environment Variables
-
-
+beanstalk_env_name        = "metabase-environment"
+beanstalk_env_description = "The environment for hosting the Metabse BI tool"
+beanstalk_env_tier        = "WebServer"
 
 # List of supported platforms/solution stacks:
 # - https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html
