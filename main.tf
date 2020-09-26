@@ -44,7 +44,7 @@ resource "aws_elastic_beanstalk_application_version" "metabase-application-versi
 resource "aws_elastic_beanstalk_environment" "metabase-env" {
   name                = var.beanstalk_env_name
   description         = var.beanstalk_env_description
-  application         = aws_elastic_beanstalk_application.metabase-app.name
+  application         = var.beanstalk_app_name
   tier                = var.beanstalk_env_tier
   solution_stack_name = var.env_platform
   tags                = var.default_tags
