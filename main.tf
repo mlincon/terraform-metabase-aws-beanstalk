@@ -32,6 +32,8 @@ resource "aws_db_instance" "metabase-postgres-db" {
   username       = var.rds_username
   password       = var.rds_password
   skip_final_snapshot = var.rds_skip_final_snapshot
+
+  tags   = var.default_tags
 }
 
 # application
@@ -81,32 +83,37 @@ resource "aws_elastic_beanstalk_environment" "metabase-env" {
     value     = "aws-elasticbeanstalk-ec2-role"
   }
 
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
-    name = "RDS_USERNAME"
-    value = aws_db_instance.metabase-postgres-db.username
-  }
+  # # RDS
+  # setting {
+  #   namespace = "aws:elasticbeanstalk:application:environment"
+  #   name = "RDS_USERNAME"
+  #   value = aws_db_instance.metabase-postgres-db.username
+  # }
 
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
-    name = "RDS_PASSWORD"
-    value = aws_db_instance.metabase-postgres-db.password
-  }
+  # setting {
+  #   namespace = "aws:elasticbeanstalk:application:environment"
+  #   name = "RDS_PASSWORD"
+  #   value = aws_db_instance.metabase-postgres-db.password
+  # }
 
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
-    name = "RDS_DATABASE"
-    value = aws_db_instance.metabase-postgres-db.name
-  }
+  # setting {
+  #   namespace = "aws:elasticbeanstalk:application:environment"
+  #   name = "RDS_DATABASE"
+  #   value = aws_db_instance.metabase-postgres-db.name
+  # }
 
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
-    name = "RDS_HOSTNAME"
-    value = aws_db_instance.metabase-postgres-db.endpoint
-  }
+  # setting {
+  #   namespace = "aws:elasticbeanstalk:application:environment"
+  #   name = "RDS_HOSTNAME"
+  #   value = aws_db_instance.metabase-postgres-db.endpoint
+  # }
 }
 
 
 # Sources:
 # https://tech.ovoenergy.com/aws-elasticbeanstalk-terraform/
 # https://blog.seamlesscloud.io/2020/07/aws-elastic-beanstalk-infrastructure-in-code-with-terraform/
+# https://briozing.com/continuously-deploying-your-springboot-application-on-aws-using-elasticbeanstalk-rds-and-terraform/
+# https://candland.net/elixir/2018/09/20/beanstalk_with_terraform.html
+# https://dev.to/rolfstreefkerk/how-to-setup-a-basic-vpc-with-ec2-and-rds-using-terraform-3jij#rds
+# https://github.com/wardviaene/terraform-demo
