@@ -21,7 +21,7 @@ variable "s3_bucket_name" {
   description = "Name of S3 bucket hosting the code"
 }
 
-variable "source_code_file_name" {
+variable "s3_source_code_file_name" {
   type        = string
   description = <<EOT
     Name of zip file containing the source code.
@@ -29,7 +29,48 @@ variable "source_code_file_name" {
     EOT
 }
 
+#rds vars
+variable "rds_instance_name" {
+  type        = string
+  description = "The name of the RDS instance, if omitted, Terraform will assign a random, unique identifier"
+}
 
+variable "rds_allocated_storage" {
+  type        = number
+  description = "The allocated storage in gibibytes"
+  default     = 20
+}
+
+variable "rds_db_engine" {
+  type        = string
+  description = "The database engine to use"
+}
+
+variable "rds_instance_class" {
+  type        = string
+  description = "The instance type of the RDS instance"
+}
+
+variable "rds_db_name" {
+  type        = string
+  description = <<EOT
+    The name of the database to create when the DB instance is created. 
+    If this parameter is not specified, no database is created in the DB instance
+    EOT
+}
+
+variable "rds_username" {
+  type = string
+  description = "Username for the master DB user"
+}
+
+variable "rds_password" {
+  type = string
+  description = <<EOT
+    Password for the master DB user. 
+    Note that this may show up in logs, and it will be stored in the state file.
+    EOT
+}
 # app vars
 
 variable "ebs_app_name" {
@@ -81,7 +122,7 @@ variable "ebs_env_tier" {
     EOT
 }
 
-variable "env_platform" {
+variable "ebs_env_platform" {
   type        = string
   description = "The environment platform"
 }
