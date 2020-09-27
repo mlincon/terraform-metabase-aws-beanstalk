@@ -32,12 +32,12 @@ variable "source_code_file_name" {
 
 # app vars
 
-variable "beanstalk_app_name" {
+variable "ebs_app_name" {
   type        = string
   description = "Name of beanstalk application"
 }
 
-variable "beanstalk_app_description" {
+variable "ebs_app_description" {
   type        = string
   description = "Short description of beanstalk application"
 }
@@ -48,29 +48,29 @@ variable "beanstalk_app_description" {
 #   description = "Whether to delete a version's source bundle from S3 when the application version is deleted"
 # }
 
-variable "beanstalk_app_version_name" {
+variable "ebs_app_version_name" {
   type        = string
   description = "Name of the application version"
 }
 
-variable "beanstalk_app_version_description" {
+variable "ebs_app_version_description" {
   type        = string
   description = "Short description of application version"
 }
 
 # env vars
 
-variable "beanstalk_env_name" {
+variable "ebs_env_name" {
   type        = string
   description = "Name of beanstalk environment"
 }
 
-variable "beanstalk_env_description" {
+variable "ebs_env_description" {
   type        = string
   description = "Short description of beanstalk environment"
 }
 
-variable "beanstalk_env_tier" {
+variable "ebs_env_tier" {
   type        = string
   default     = "WebServer"
   description = <<EOT
@@ -84,4 +84,9 @@ variable "beanstalk_env_tier" {
 variable "env_platform" {
   type        = string
   description = "The environment platform"
+}
+
+variable "ebs_app_version_label" {
+  type        = string
+  description = "Unique name for this version of the application code"
 }

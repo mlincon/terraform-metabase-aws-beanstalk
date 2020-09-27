@@ -24,17 +24,18 @@ s3_bucket_name        = "terraform-metabase-mxl-experiment"
 source_code_file_name = "metabase-aws-eb.zip"
 
 # Beanstalk Application Variables
-beanstalk_app_name        = "metabase-application"
-beanstalk_app_description = "An instance of the Metabase BI tool"
+ebs_app_name        = "metabase-application"
+ebs_app_description = "An instance of the Metabase BI tool"
 # delete_source_from_s3     = true
 
-beanstalk_app_version_name        = "metabase-application-version"
-beanstalk_app_version_description = "The application version"
+ebs_app_version_name        = "metabase-application-version"
+ebs_app_version_description = "The application version"
 
 # Beanstalk Environment Variables
-beanstalk_env_name        = "metabase-environment"
-beanstalk_env_description = "The environment for hosting the Metabse BI tool"
-beanstalk_env_tier        = "WebServer"
+ebs_env_name        = "metabase-environment"
+ebs_env_description = "The environment for hosting the Metabse BI tool"
+ebs_env_tier        = "WebServer"
+ebs_app_version_label = "v0.36.5.1"
 
 # List of supported platforms/solution stacks:
 # - https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html

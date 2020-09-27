@@ -13,15 +13,15 @@ resource "aws_s3_bucket" "metabase-bucket" {
 resource "aws_s3_bucket_object" "metabase-bucket-object" {
   bucket = aws_s3_bucket.metabase-bucket.id
   key    = var.source_code_file_name
-  source = "./code/${var.source_code_file_name}"
+  source = "./src/${var.source_code_file_name}"
   tags   = var.default_tags
 }
 
 # application
 
 resource "aws_elastic_beanstalk_application" "metabase-app" {
-  name        = var.beanstalk_app_name
-  description = var.beanstalk_app_description
+  name        = var.ebs_app_name
+  description = var.ebs_app_description
   tags        = var.default_tags
 
   # appversion_lifecycle {
@@ -32,9 +32,9 @@ resource "aws_elastic_beanstalk_application" "metabase-app" {
 
 # application code/version
 resource "aws_elastic_beanstalk_application_version" "metabase-application-version" {
-  name        = var.beanstalk_app_version_name
-  application = var.beanstalk_app_name
-  description = var.beanstalk_app_version_description
+  name        = var.ebs_app_version_name
+  application = var.ebs_app_name
+  description = var.ebs_app_version_description
   bucket      = aws_s3_bucket.metabase-bucket.id
   key         = aws_s3_bucket_object.metabase-bucket-object.id
 }
@@ -42,13 +42,13 @@ resource "aws_elastic_beanstalk_application_version" "metabase-application-versi
 # environment
 
 resource "aws_elastic_beanstalk_environment" "metabase-env" {
-  name                = var.beanstalk_env_name
-  description         = var.beanstalk_env_description
-  application         = var.beanstalk_app_name
-  tier                = var.beanstalk_env_tier
+  name                = var.ebs_env_name
+  description         = var.ebs_env_description
+  application         = var.ebs_app_name
+  tier                = var.ebs_env_tier
   solution_stack_name = var.env_platform
   tags                = var.default_tags
-  version_label       = var.beanstalk_app_version_name
+  version_label       = var.ebs_app_version_name
 }
 
 
