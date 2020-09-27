@@ -29,8 +29,9 @@ rds_allocated_storage = 10
 rds_db_engine         = "postgres"
 rds_instance_class    = "db.t2.micro"
 rds_db_name           = "devDB"
-rds_username = "metaAdmin"
-rds_password = "db-password-that-should-be-secured-properly"
+rds_username          = "metaAdmin"
+rds_password          = "db-password-that-should-be-secured-properly"
+rds_skip_final_snapshot = true
 
 # Beanstalk Application Variables
 ebs_app_name        = "metabase-application"

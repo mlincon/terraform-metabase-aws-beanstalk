@@ -60,17 +60,27 @@ variable "rds_db_name" {
 }
 
 variable "rds_username" {
-  type = string
+  type        = string
   description = "Username for the master DB user"
 }
 
 variable "rds_password" {
-  type = string
+  type        = string
   description = <<EOT
     Password for the master DB user. 
     Note that this may show up in logs, and it will be stored in the state file.
     EOT
 }
+
+variable "rds_skip_final_snapshot" {
+  type = bool
+  description = <<EOT
+    Determines whether a final DB snapshot is created before the DB instance is deleted. 
+    If true is specified, no DBSnapshot is created
+    EOT
+  default = true
+}
+
 # app vars
 
 variable "ebs_app_name" {
