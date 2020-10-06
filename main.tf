@@ -3,6 +3,32 @@ provider "aws" {
   profile = var.profile
 }
 
+
+# service role
+data "aws_iam_policy_document" "ebs-trusted-entity" {
+  version = "2012-10-17"
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["elasticbeanstalk.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "ebs-service-role" {
+  name               = var.ebs_iam_role_name
+  assume_role_policy = data.aws_iam_policy_document.ebs-trusted-entity.json
+}
+
+resource "aws_iam_role_policy_attachment" "ebs-role-policy-attach" {
+  role       = aws_iam_role.ebs-service-role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkService"
+}
+
+
+
 # s3
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket
 resource "aws_s3_bucket" "metabase-bucket" {
@@ -27,13 +53,13 @@ resource "aws_db_instance" "metabase-postgres-db" {
   allocated_storage = var.rds_allocated_storage
   engine            = var.rds_db_engine
   # engine_version = # use the latest version
-  instance_class = var.rds_instance_class
-  name           = var.rds_db_name
-  username       = var.rds_username
-  password       = var.rds_password
+  instance_class      = var.rds_instance_class
+  name                = var.rds_db_name
+  username            = var.rds_username
+  password            = var.rds_password
   skip_final_snapshot = var.rds_skip_final_snapshot
 
-  tags   = var.default_tags
+  tags = var.default_tags
 }
 
 # application
@@ -45,10 +71,10 @@ resource "aws_elastic_beanstalk_application" "metabase-app" {
 
   depends_on = [aws_db_instance.metabase-postgres-db]
 
-  # appversion_lifecycle {
-  #   service_role          = 
-  #   delete_source_from_s3 = var.delete_source_from_s3
-  # }
+  appversion_lifecycle {
+    service_role          = aws_iam_role.ebs-service-role.arn
+    delete_source_from_s3 = var.delete_source_from_s3
+  }
 }
 
 # application code/version
@@ -75,7 +101,7 @@ resource "aws_elastic_beanstalk_environment" "metabase-env" {
   version_label       = aws_elastic_beanstalk_application_version.metabase-app-version.name
 
   # https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options-general.html
-  
+
   # Environment must have instance profile associated with it
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
