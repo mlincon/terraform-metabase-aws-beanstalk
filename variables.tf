@@ -15,7 +15,16 @@ variable "default_tags" {
   description = "Tags as key-value pairs"
 }
 
-# S3 vars
+# iam
+
+variable "ebs_iam_role_name" {
+  type        = string
+  description = "IAM role name"
+}
+
+
+# s3 vars
+
 variable "s3_bucket_name" {
   type        = string
   description = "Name of S3 bucket hosting the code"
@@ -29,7 +38,8 @@ variable "s3_source_code_file_name" {
     EOT
 }
 
-#rds vars
+# rds vars
+
 variable "rds_instance_name" {
   type        = string
   description = "The name of the RDS instance, if omitted, Terraform will assign a random, unique identifier"
@@ -52,7 +62,8 @@ variable "rds_instance_class" {
 }
 
 variable "rds_db_name" {
-  type        = string
+  type = string
+  # use "heredoc" to insert multi-line comment
   description = <<EOT
     The name of the database to create when the DB instance is created. 
     If this parameter is not specified, no database is created in the DB instance
@@ -73,12 +84,12 @@ variable "rds_password" {
 }
 
 variable "rds_skip_final_snapshot" {
-  type = bool
+  type        = bool
   description = <<EOT
     Determines whether a final DB snapshot is created before the DB instance is deleted. 
-    If true is specified, no DBSnapshot is created
+    If true is specified, no DBSnapshot is created.
     EOT
-  default = true
+  default     = true
 }
 
 # app vars
@@ -93,11 +104,11 @@ variable "ebs_app_description" {
   description = "Short description of beanstalk application"
 }
 
-# variable "delete_source_from_s3" {
-#   type        = bool
-#   default     = true
-#   description = "Whether to delete a version's source bundle from S3 when the application version is deleted"
-# }
+variable "delete_source_from_s3" {
+  type        = bool
+  default     = true
+  description = "Whether to delete a version's source bundle from S3 when the application version is deleted"
+}
 
 variable "ebs_app_version_name" {
   type        = string
