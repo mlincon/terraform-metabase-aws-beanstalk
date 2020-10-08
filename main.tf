@@ -4,7 +4,9 @@ provider "aws" {
 }
 
 
-# service role
+# IAM role
+
+# policy document: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document
 data "aws_iam_policy_document" "ebs-trusted-entity" {
   version = "2012-10-17"
   statement {
@@ -17,19 +19,20 @@ data "aws_iam_policy_document" "ebs-trusted-entity" {
   }
 }
 
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role
 resource "aws_iam_role" "ebs-service-role" {
   name               = var.ebs_iam_role_name
   assume_role_policy = data.aws_iam_policy_document.ebs-trusted-entity.json
 }
 
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment
 resource "aws_iam_role_policy_attachment" "ebs-role-policy-attach" {
   role       = aws_iam_role.ebs-service-role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkService"
 }
 
 
-
-# s3
+# S3 bucket
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket
 resource "aws_s3_bucket" "metabase-bucket" {
   bucket = var.s3_bucket_name
@@ -46,7 +49,7 @@ resource "aws_s3_bucket_object" "metabase-bucket-object" {
   depends_on = [aws_s3_bucket.metabase-bucket]
 }
 
-# rds
+# RDS: Postgres
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance
 resource "aws_db_instance" "metabase-postgres-db" {
   identifier        = var.rds_instance_name
@@ -57,12 +60,14 @@ resource "aws_db_instance" "metabase-postgres-db" {
   name                = var.rds_db_name
   username            = var.rds_username
   password            = var.rds_password
+  port                = var.rds_port
   skip_final_snapshot = var.rds_skip_final_snapshot
+  publicly_accessible = var.rds_publicly_accessible
 
   tags = var.default_tags
 }
 
-# application
+# Elastic Beanstalk Application
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elastic_beanstalk_application
 resource "aws_elastic_beanstalk_application" "metabase-app" {
   name        = var.ebs_app_name
@@ -77,7 +82,7 @@ resource "aws_elastic_beanstalk_application" "metabase-app" {
   }
 }
 
-# application code/version
+# application code
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elastic_beanstalk_application_version
 resource "aws_elastic_beanstalk_application_version" "metabase-app-version" {
   name        = var.ebs_app_version_name
@@ -89,7 +94,7 @@ resource "aws_elastic_beanstalk_application_version" "metabase-app-version" {
   depends_on = [aws_elastic_beanstalk_application.metabase-app]
 }
 
-# environment
+# Elastic Beanstalk Environment
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elastic_beanstalk_environment
 resource "aws_elastic_beanstalk_environment" "metabase-env" {
   name                = var.ebs_env_name
@@ -109,30 +114,42 @@ resource "aws_elastic_beanstalk_environment" "metabase-env" {
     value     = "aws-elasticbeanstalk-ec2-role"
   }
 
-  # # RDS
-  # setting {
-  #   namespace = "aws:elasticbeanstalk:application:environment"
-  #   name = "RDS_USERNAME"
-  #   value = aws_db_instance.metabase-postgres-db.username
-  # }
+  # RDS  
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "MB_DB_TYPE"
+    value     = aws_db_instance.metabase-postgres-db.engine
+  }
 
-  # setting {
-  #   namespace = "aws:elasticbeanstalk:application:environment"
-  #   name = "RDS_PASSWORD"
-  #   value = aws_db_instance.metabase-postgres-db.password
-  # }
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "MB_DB_DBNAME"
+    value     = aws_db_instance.metabase-postgres-db.name
+  }
 
-  # setting {
-  #   namespace = "aws:elasticbeanstalk:application:environment"
-  #   name = "RDS_DATABASE"
-  #   value = aws_db_instance.metabase-postgres-db.name
-  # }
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "MB_DB_PORT"
+    value     = aws_db_instance.metabase-postgres-db.port
+  }
 
-  # setting {
-  #   namespace = "aws:elasticbeanstalk:application:environment"
-  #   name = "RDS_HOSTNAME"
-  #   value = aws_db_instance.metabase-postgres-db.endpoint
-  # }
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "MB_DB_USER"
+    value     = aws_db_instance.metabase-postgres-db.username
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "MB_DB_PASS"
+    value     = aws_db_instance.metabase-postgres-db.password
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "MB_DB_HOST"
+    value     = aws_db_instance.metabase-postgres-db.endpoint
+  }
 }
 
 

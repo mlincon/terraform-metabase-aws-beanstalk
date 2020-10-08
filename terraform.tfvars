@@ -32,10 +32,12 @@ rds_instance_name       = "metabse-db"
 rds_allocated_storage   = 10
 rds_db_engine           = "postgres"
 rds_instance_class      = "db.t2.micro"
-rds_db_name             = "devDB"
+rds_db_name             = "metabase"
 rds_username            = "metaAdmin"
 rds_password            = "db-password-that-should-be-secured-properly"
+rds_port                = 5432
 rds_skip_final_snapshot = true
+rds_publicly_accessible = true
 
 # Beanstalk Application Variables
 ebs_app_name          = "metabase-application"

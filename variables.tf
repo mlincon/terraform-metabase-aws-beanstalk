@@ -75,6 +75,11 @@ variable "rds_username" {
   description = "Username for the master DB user"
 }
 
+variable "rds_port" {
+  type        = number
+  description = "The port on which the DB accepts connections"
+}
+
 variable "rds_password" {
   type        = string
   description = <<EOT
@@ -90,6 +95,12 @@ variable "rds_skip_final_snapshot" {
     If true is specified, no DBSnapshot is created.
     EOT
   default     = true
+}
+
+variable "rds_publicly_accessible" {
+  type        = bool
+  description = "Bool to control if instance is publicly accessible"
+  default     = false
 }
 
 # app vars
